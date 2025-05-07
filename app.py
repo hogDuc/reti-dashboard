@@ -1,7 +1,11 @@
 import pandas as pd
 import streamlit as st
+<<<<<<< HEAD
 from pandas.tseries.offsets import MonthEnd
 import numpy as np
+=======
+# import matplotlib.pyplot as plt
+>>>>>>> 4b4b3a0c648ceb87313afa6654e0948edc889890
 
 # Shorten unit
 UNIT = 1000000
@@ -40,6 +44,7 @@ st.set_page_config(
     layout="wide"
 )
 st.header("RETI Dashboard")
+<<<<<<< HEAD
 
 metric_1, metric_2, metric_3, metric_4 = st.columns(4)
 with metric_1:
