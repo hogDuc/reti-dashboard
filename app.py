@@ -40,7 +40,6 @@ st.set_page_config(
     layout="wide"
 )
 st.header("RETI Dashboard")
-<<<<<<< HEAD
 
 metric_1, metric_2, metric_3, metric_4 = st.columns(4)
 with metric_1:
