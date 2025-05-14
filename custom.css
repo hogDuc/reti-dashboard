@@ -40,3 +40,7 @@ hr[data-testid="stHeadingDivider"] {
 .st-key-project-metric-2 strong {
     color: red
 }
+
+.st-key-project-specific-row .stColumns {
+    background: white
+}
