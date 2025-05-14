@@ -41,6 +41,6 @@ hr[data-testid="stHeadingDivider"] {
     color: red
 }
 
-.st-key-project-specific-row .stColumns {
+.st-key-project-specific-row div[data-testid="stVerticalBlockBorderWrapper"] {
     background: white
 }
