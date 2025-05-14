@@ -1,0 +1,42 @@
+.st-key-business-metrics-4, .st-key-business-metrics-3, .st-key-business-metrics-2, 
+.st-key-business-metrics-1,.st-emotion-cache-4uzi61.eu6p4el5,
+.st-key-project-metric-1, .st-key-project-metric-2, .st-key-project-metric-3, .st-key-project-metric-4 {
+    background-color: white;
+    border-radius: .5pc;
+    box-shadow: 5px 5px 5px lightgrey;
+}
+
+.st-key-project-metric-4 .stElementContainer .stMetric {
+    height: 10pc;
+}
+
+hr[data-testid="stHeadingDivider"] {
+    background-color: #ee5a37;
+}
+
+.st-key-project-rev-barchart, .st-key-project-rev-piechart {
+    background-color: white;
+    border-radius: .5pc;
+    box-shadow: none !important;
+}
+.st-key-project-metric-4 div[data-testid="stMetricValue"] .st-emotion-cache-1wivap2 {
+    color:#ee5a37;
+    font-size: 250%;
+}
+
+.st-key-business-metrics-1 div[data-testid="stMarkdownContainer"], .st-key-business-metrics-2 div[data-testid="stMarkdownContainer"], 
+.st-key-business-metrics-3 div[data-testid="stMarkdownContainer"], .st-key-business-metrics-4 div[data-testid="stMarkdownContainer"] {
+    color: #ee5a37
+}
+.st-key-project-metric-1 div[data-testid="stMetricValue"], .st-key-project-metric-2 div[data-testid="stMetricValue"], 
+.st-key-project-metric-3 div[data-testid="stMetricValue"] {
+    font-size: 1.5rem;
+    color: #ee5a37
+}
+
+.st-key-project-metric-1 strong {
+    color: green
+}
+.st-key-project-metric-2 strong {
+    color: red
+}
