@@ -264,8 +264,8 @@ with col1:
             border=True
         )
 
-with st.container(key="revenue-summary", border=True):
-    with col2:
+with col2:
+    with st.container(key="revenue-summary", border=True):
         st.plotly_chart(revenue_fig_2)
 
 # Third row
