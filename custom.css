@@ -1,6 +1,7 @@
 .st-key-business-metrics-4, .st-key-business-metrics-3, .st-key-business-metrics-2, 
-.st-key-business-metrics-1,.st-emotion-cache-4uzi61.eu6p4el5,
-.st-key-project-metric-1, .st-key-project-metric-2, .st-key-project-metric-3, .st-key-project-metric-4 {
+.st-key-business-metrics-1,.st-emotion-cache-4uzi61.eu6p4el5, .st-key-project-specific-row div[data-testid="stVerticalBlockBorderWrapper"],
+.st-key-project-metric-1, .st-key-project-metric-2, .st-key-project-metric-3, .st-key-project-metric-4,
+.st-key-revenue-summary div[data-testid="stVerticalBlockBorderWrapper"] {
     background-color: white;
     border-radius: .5pc;
     box-shadow: 5px 5px 5px lightgrey;
@@ -39,8 +40,4 @@ hr[data-testid="stHeadingDivider"] {
 }
 .st-key-project-metric-2 strong {
     color: red
-}
-
-.st-key-project-specific-row div[data-testid="stVerticalBlockBorderWrapper"] {
-    background: white
 }
