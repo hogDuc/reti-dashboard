@@ -30,6 +30,21 @@ def readData(sheetName="", valueName=""):
     )
     return df
 
+def pct_change_abs(series, periods=1):
+    """
+    Calculate percent change using absolute value of the previous period.
+    Allows specifying the number of periods to look back.
+
+    Parameters:
+    - series: pd.Series
+    - periods: int, number of periods to shift (default=1)
+
+    Returns:
+    - pd.Series of percentage changes
+    """
+    prev = series.shift(periods)
+    return (series - prev) / prev.abs()
+
 revenue_df = readData('revenue', 'revenue')
 cogs_df = readData('cogs', 'cogs')
 fee_df = readData('fee', 'fee')
@@ -112,21 +127,27 @@ revenue_pie.update_traces(
 )
 
 # Overall Business metrics
-reti_overall = df.groupby(['year', 'month'])[['revenue', 'cogs']].sum()\
+reti_overall = df.loc[~(df.project.isin(["total"]))]\
+    .groupby(['year', 'month'])[['revenue', 'cogs']].sum()\
     .assign(
         grossProfit = lambda x: x["revenue"] - x["cogs"],
-        changeRevenue = lambda x: x['revenue'].pct_change(periods=12)*100,
-        changeCogs = lambda x: x['cogs'].pct_change(periods=12),
-        changeGrossProfit = lambda x: x['grossProfit'].pct_change(periods=12)*100,
-        profitMargin = lambda x: x["grossProfit"] / x["revenue"],
+        # changeRevenue = lambda x: x['revenue'].pct_change(periods=12)*100,
+        changeRevenue = lambda x: pct_change_abs(x['revenue'], periods=12)*100,
+        # changeCogs = lambda x: x['cogs'].pct_change(periods=12),
+        changeCogs =lambda x: pct_change_abs(x['cogs'], periods=12),
+        # changeGrossProfit = lambda x: x['grossProfit'].pct_change(periods=12)*100,
+        changeGrossProfit =lambda x: pct_change_abs(x['grossProfit'], periods=12)*100,
+        profitMargin = lambda x: x["grossProfit"] / x["revenue"].replace(0, np.nan),
         changeProfitMargin = lambda x: x["profitMargin"].diff(periods=12)
     )
 reti_overall = pd.merge(reti_overall, ebt_df, on=["year", "month"])\
     .rename(columns={"fee":"ebt"})\
     .assign(
-        ebtMargin = lambda x: x["ebt"] / x["revenue"],
+        ebtMargin = lambda x: x["ebt"] / x["revenue"].replace(0, np.nan),
         changeEbtMargin = lambda x: x["ebtMargin"].diff(periods=12)
     )
+
+# Separate revenue sources
 other_revenue = pd.DataFrame(
     df.loc[(df.project.isin(["Doanh thu cho thuê HCM", "Thưởng nóng"]))].groupby(["year", "month", "project"])[["revenue"]].sum()
 ).reset_index()
@@ -202,35 +223,74 @@ st.logo(
 # st.title("RETI LOGO HERE")
 st.header("Dashboard")
 
+# st.dataframe(reti_overall)
+
+metric_5, metric_6, metric_7, metric_8 = st.columns(4)
+with metric_5:
+    with st.container(key="business-metrics-5"):
+        st.metric(
+            label="Total revenue",
+            value= f"{round(sum(reti_overall.revenue)/UNIT, 2)}M",
+            border = True
+        )
+with metric_6:
+    with st.container(key="business-metrics-6"):
+        st.metric(
+            label="Total Gross Profit",
+            value=f"{round(sum(reti_overall.grossProfit) / UNIT, 2)}M",
+            border=True
+        )   
+with metric_7:
+    with st.container(key="business-metrics-7"):
+        st.metric(
+            label="Total Gross Profit Margin",
+            value=f'''{
+                (round((sum(reti_overall.grossProfit)/UNIT) / (sum(reti_overall.revenue)/UNIT), 2)) * 100
+            }%''',
+            border=True
+        )
+with metric_8:
+    with st.container(key="business-metrics-8"):
+        st.metric(
+            label="EBT margin",
+            # value=round(
+            #     sum(reti_overall.ebtMargin)/sum(reti_overall.revenue), 
+            #     2
+            # ) * 100,
+            value = f"{round(0.107503564, 2)*100}%",
+            border=True
+        )
+
+
 metric_1, metric_2, metric_3, metric_4 = st.columns(4)
 with metric_1:
     with st.container(key="business-metrics-1"):
         st.metric(
-            label="Previous month revenue",
-            value= f"{round((reti_overall["revenue"].tail(1).values[0])/UNIT, 2)}M",
+            label="Previous Month Revenue",
+            value= f"{round((reti_overall.revenue.tail(1).values[0])/UNIT, 2)}M",
             delta= f"{round((reti_overall.changeRevenue.tail(1).values[0]), 2)}% YoY",
             border = True
         )
 with metric_2:
     with st.container(key="business-metrics-2"):
         st.metric(
-            label="Previous month gross profit",
-            value=f"{round((reti_overall["grossProfit"].tail(1).values[0]) / UNIT, 2)}M",
+            label="Previous Month Gross profit",
+            value=f"{round((reti_overall.grossProfit.tail(1).values[0]) / UNIT, 2)}M",
             delta= f"{round((reti_overall.changeGrossProfit.tail(1).values[0]), 2)}% YoY",
             border=True
         )   
 with metric_3:
     with st.container(key="business-metrics-3"):
         st.metric(
-            label="Gross profit Margin",
-            value=round(reti_overall.profitMargin.tail(1).values[0], 2),
-            delta=f"{round(reti_overall.changeProfitMargin.tail(1).values[0] ,2)} YoY",
+            label="Previous Month Gross Profit Margin",
+            value=f"{round(reti_overall.profitMargin.tail(1).values[0], 2) * 100}%",
+            delta=f"{round(reti_overall.changeProfitMargin.tail(1).values[0] ,2)* 100}% from last year",
             border=True
         )
 with metric_4:
     with st.container(key="business-metrics-4"):
         st.metric(
-            label="EBT margin",
+            label="Previous Month EBT margin",
             value=round(reti_overall.ebtMargin.tail(1).values[0], 2),
             delta=f"{round(reti_overall.changeEbtMargin.tail(1).values[0], 2)} YoY",
             border=True
