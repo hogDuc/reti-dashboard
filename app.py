@@ -1,5 +1,6 @@
 import pandas as pd
 from pandas.tseries.offsets import MonthEnd
+import plotly.graph_objects as go
 import plotly.express as px
 import numpy as np
 import streamlit as st
@@ -7,7 +8,7 @@ import os
 
 # Shorten unit
 UNIT = 1000000
-
+st.session_state.UNIT = UNIT
 # Process data
 
 def readData(sheetName="", valueName=""):
@@ -198,6 +199,15 @@ revenue_fig_2.update_layout(
     )
 )
 
+df = df.assign(
+        grossProfit = lambda x: x["revenue"] - x["cogs"],
+    ).assign(
+        grossProfit = lambda x: x["grossProfit"].fillna(0),
+        grossMargin = lambda x: x["grossProfit"] / x['revenue'].fillna(0),
+        cogsOverRev = lambda x: x["cogs"] / x["revenue"].fillna(0)
+    )
+st.session_state.df = df
+st.session_state.project_df = project_df
 
 # Project specific metrics
 
@@ -206,7 +216,8 @@ revenue_fig_2.update_layout(
 # ==================
 
 st.set_page_config(
-    layout="wide"
+    layout="wide",
+    page_title="Reti Dashboard"
 )
 
 # Import css
@@ -220,81 +231,120 @@ st.logo(
     size="large",
     # icon_image=os.path.join("assets","reti_small.png")
 )
-# st.title("RETI LOGO HERE")
+
+with st.sidebar:
+    st.title("Dashboard Options")
+    st.page_link("app.py", label="Overview")
+    st.page_link(os.path.join("pages", "project_detail.py"), label="Project Detail")
+
 st.header("Dashboard")
 
-# st.dataframe(reti_overall)
+first_row_col_1, first_row_col_2 = st.columns([1, 3])
+with first_row_col_1:
+    with st.container(key="gauge-chart", height = 250):
+        gauge = go.Figure(go.Indicator(
+            mode="gauge+number",
+            value=round((sum(reti_overall.grossProfit) / sum(reti_overall.revenue)), 2) * 100,
+            number={'suffix': "%"},
+            title=dict(
+                text="Total Gross Profit Margin",
+                font=dict(
+                    color="#ee5a37"
+                )
+            ),
+            gauge={
+            'axis': {'range': [0, 100]},
+            'bar': {'color': "#ee5a37"}
+            }
+        ))
+        gauge.update_layout(
+            height=300,
+            plot_bgcolor =  "rgba(0, 0, 0, 0)",
+            paper_bgcolor = "rgba(0, 0, 0, 0)",
+            margin = dict(t=0, b=0, pad=0)
+        )
+        st.plotly_chart(gauge)
+with first_row_col_2:
 
-metric_5, metric_6, metric_7, metric_8 = st.columns(4)
-with metric_5:
-    with st.container(key="business-metrics-5"):
-        st.metric(
-            label="Total revenue",
-            value= f"{round(sum(reti_overall.revenue)/UNIT, 2)}M",
-            border = True
-        )
-with metric_6:
-    with st.container(key="business-metrics-6"):
-        st.metric(
-            label="Total Gross Profit",
-            value=f"{round(sum(reti_overall.grossProfit) / UNIT, 2)}M",
-            border=True
-        )   
-with metric_7:
-    with st.container(key="business-metrics-7"):
-        st.metric(
-            label="Total Gross Profit Margin",
-            value=f'''{
-                (round((sum(reti_overall.grossProfit)/UNIT) / (sum(reti_overall.revenue)/UNIT), 2)) * 100
-            }%''',
-            border=True
-        )
-with metric_8:
-    with st.container(key="business-metrics-8"):
-        st.metric(
-            label="EBT margin",
-            # value=round(
-            #     sum(reti_overall.ebtMargin)/sum(reti_overall.revenue), 
-            #     2
-            # ) * 100,
-            value = f"{round(0.107503564, 2)*100}%",
-            border=True
-        )
+    metric_5, metric_6, metric_7= st.columns(3) 
+    with metric_5:
+        with st.container(key="business-metrics-5"):
+            st.metric(
+                label="Total revenue",
+                value= f"{round(sum(reti_overall.revenue)/UNIT, 2)}M",
+                border = True
+            )
+    with metric_6:
+        with st.container(key="business-metrics-6"):
+            st.metric(
+                label="Total Gross Profit",
+                value=f"{round(sum(reti_overall.grossProfit) / UNIT, 2)}M",
+                border=True
+            )   
+    with metric_7:
+        with st.container(key="business-metrics-7"):
+            # st.metric(
+            #     label="Total Gross Profit Margin",
+            #     value=f'''{
+            #         (round((sum(reti_overall.grossProfit)/UNIT) / (sum(reti_overall.revenue)/UNIT), 2)) * 100
+            #     }%''',
+            #     border=True
+            # )
+            st.metric(
+                label="Total EBT Margin",
+                # value=round(
+                #     sum(reti_overall.ebtMargin)/sum(reti_overall.revenue), 
+                #     2
+                # ) * 100,
+                value = f"{round(0.107503564, 2)*100}%",
+                border=True
+            )
+    # with metric_8:
+    #     with st.container(key="business-metrics-8"):
+    #         st.metric(
+    #             label="EBT margin",
+    #             # value=round(
+    #             #     sum(reti_overall.ebtMargin)/sum(reti_overall.revenue), 
+    #             #     2
+    #             # ) * 100,
+    #             value = f"{round(0.107503564, 2)*100}%",
+    #             border=True
+    #         )
 
 
-metric_1, metric_2, metric_3, metric_4 = st.columns(4)
-with metric_1:
-    with st.container(key="business-metrics-1"):
-        st.metric(
-            label="Previous Month Revenue",
-            value= f"{round((reti_overall.revenue.tail(1).values[0])/UNIT, 2)}M",
-            delta= f"{round((reti_overall.changeRevenue.tail(1).values[0]), 2)}% YoY",
-            border = True
-        )
-with metric_2:
-    with st.container(key="business-metrics-2"):
-        st.metric(
-            label="Previous Month Gross profit",
-            value=f"{round((reti_overall.grossProfit.tail(1).values[0]) / UNIT, 2)}M",
-            delta= f"{round((reti_overall.changeGrossProfit.tail(1).values[0]), 2)}% YoY",
-            border=True
-        )   
-with metric_3:
-    with st.container(key="business-metrics-3"):
-        st.metric(
-            label="Previous Month Gross Profit Margin",
-            value=f"{round(reti_overall.profitMargin.tail(1).values[0], 2) * 100}%",
-            delta=f"{round(reti_overall.changeProfitMargin.tail(1).values[0] ,2)* 100}% from last year",
-            border=True
-        )
-with metric_4:
-    with st.container(key="business-metrics-4"):
-        st.metric(
-            label="Previous Month EBT margin",
-            value=round(reti_overall.ebtMargin.tail(1).values[0], 2),
-            delta=f"{round(reti_overall.changeEbtMargin.tail(1).values[0], 2)} YoY",
-            border=True
-        )
+    metric_1, metric_2, metric_3= st.columns(3)
+    with metric_1:
+        with st.container(key="business-metrics-1"):
+            st.metric(
+                label="Previous Month Revenue",
+                value= f"{round((reti_overall.revenue.tail(1).values[0])/UNIT, 2)}M",
+                delta= f"{round((reti_overall.changeRevenue.tail(1).values[0]), 2)}% YoY",
+                border = True
+            )
+    with metric_2:
+        with st.container(key="business-metrics-2"):
+            st.metric(
+                label="Previous Month Gross profit",
+                value=f"{round((reti_overall.grossProfit.tail(1).values[0]) / UNIT, 2)}M",
+                delta= f"{round((reti_overall.changeGrossProfit.tail(1).values[0]), 2)}% YoY",
+                border=True
+            )   
+    with metric_3:
+        with st.container(key="business-metrics-3"):
+            st.metric(
+                label="Previous Month Gross Profit Margin",
+                value=f"{round(reti_overall.profitMargin.tail(1).values[0], 2) * 100}%",
+                delta=f"{round(reti_overall.changeProfitMargin.tail(1).values[0] ,2)* 100}% from last year",
+                border=True
+            )
+    # with metric_4:
+    #     with st.container(key="business-metrics-4"):
+    #         st.metric(
+    #             label="Previous Month EBT margin",
+    #             value=round(reti_overall.ebtMargin.tail(1).values[0], 2),
+    #             delta=f"{round(reti_overall.changeEbtMargin.tail(1).values[0], 2)} YoY",
+    #             border=True
+    #         )
 
 # Second row
 col1, col2 = st.columns([1, 3])
@@ -341,5 +391,6 @@ with st.container(key="project-specific-row"):
         with st.container(key="project-rev-piechart", border=True):
             # st.subheader(body="Revenue component", divider="orange")
             st.plotly_chart(
-                revenue_pie
+                revenue_pie,
+                key = "piechart"
             )

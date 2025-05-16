@@ -5,3 +5,6 @@ backgroundColor = "#f7f7f7"
 
 [server]
 runOnSave = true
+
+[client]
+showSidebarNavigation = false

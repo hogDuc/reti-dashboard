@@ -1,11 +1,13 @@
 .st-key-business-metrics-5, .st-key-business-metrics-6, .st-key-business-metrics-7, .st-key-business-metrics-8, 
 .st-key-business-metrics-4, .st-key-business-metrics-3, .st-key-business-metrics-2, 
-.st-key-business-metrics-1,.st-emotion-cache-4uzi61.eu6p4el5, .st-key-project-specific-row div[data-testid="stVerticalBlockBorderWrapper"],
+.st-key-business-metrics-1, .st-emotion-cache-4uzi61.eu6p4el5, .st-key-project-specific-row div[data-testid="stVerticalBlockBorderWrapper"], div[class="st-emotion-cache-bct9qr eu6p4el5"],
 .st-key-project-metric-1, .st-key-project-metric-2, .st-key-project-metric-3, .st-key-project-metric-4,
-.st-key-revenue-summary div[data-testid="stVerticalBlockBorderWrapper"] {
+.st-key-revenue-summary div[data-testid="stVerticalBlockBorderWrapper"],
+.st-key-detail-1, .st-key-detail-2, .st-key-detail-3, .st-key-detail-4 {
     background-color: white;
     border-radius: .5pc;
     box-shadow: 5px 5px 5px lightgrey;
+    overflow: hidden;
 }
 
 .st-key-project-metric-4 .stElementContainer .stMetric {
@@ -43,4 +45,16 @@ hr[data-testid="stHeadingDivider"] {
 }
 .st-key-project-metric-2 strong {
     color: red
+}
+
+div[data-testid="stSidebarHeader"] {
+    background: #f7f7f7;
+}
+
+section[data-testid="stSidebar"] {
+    box-shadow: 5px 5px 5px lightgrey;
+}
+
+.st-key-detail-3 div[data-testid="stMetric"], .st-key-detail-4 div[data-testid="stMetric"] {
+    height: 7.8pc;    
 }
