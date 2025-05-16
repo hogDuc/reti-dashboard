@@ -31,7 +31,11 @@ hr[data-testid="stHeadingDivider"] {
 .st-key-business-metrics-1 div[data-testid="stMarkdownContainer"], .st-key-business-metrics-2 div[data-testid="stMarkdownContainer"], 
 .st-key-business-metrics-3 div[data-testid="stMarkdownContainer"], .st-key-business-metrics-4 div[data-testid="stMarkdownContainer"], 
 .st-key-business-metrics-5 div[data-testid="stMarkdownContainer"], .st-key-business-metrics-6 div[data-testid="stMarkdownContainer"], 
-.st-key-business-metrics-7 div[data-testid="stMarkdownContainer"], .st-key-business-metrics-8 div[data-testid="stMarkdownContainer"] {
+.st-key-business-metrics-7 div[data-testid="stMarkdownContainer"], .st-key-business-metrics-8 div[data-testid="stMarkdownContainer"],
+.st-key-detail-1 div[data-testid="stMarkdownContainer"], 
+.st-key-detail-2 div[data-testid="stMarkdownContainer"], 
+.st-key-detail-3 div[data-testid="stMarkdownContainer"], 
+.st-key-detail-4 div[data-testid="stMarkdownContainer"] {
     color: #ee5a37
 }
 .st-key-project-metric-1 div[data-testid="stMetricValue"], .st-key-project-metric-2 div[data-testid="stMetricValue"], 
